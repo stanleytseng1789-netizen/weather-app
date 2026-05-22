@@ -1,9 +1,9 @@
-const CACHE_NAME = "weather-app-v2";
+const CACHE_NAME = "weather-app-v3";
 const APP_ASSETS = [
   "./",
   "./index.html",
-  "./styles.css",
-  "./app.js",
+  "./styles.css?v=3",
+  "./app.js?v=3",
   "./manifest.webmanifest",
   "./icon.svg",
 ];
@@ -17,7 +17,13 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => key.startsWith("weather-app-") && key !== CACHE_NAME)
+            .map((key) => caches.delete(key))
+        )
+      )
   );
   self.clients.claim();
 });
