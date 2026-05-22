@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0f8f8c" />
+    <meta name="theme-color" content="#101923" />
     <meta name="mobile-web-app-capable" content="yes" />
     <title>&#22825;&#27683; App</title>
     <link rel="manifest" href="manifest.webmanifest" />
@@ -11,78 +11,112 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="app-shell">
-      <section class="weather-panel" aria-label="&#22825;&#27683;&#26597;&#35426;">
-        <header class="topbar">
+    <main class="weather-app">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Wind Map Forecast</p>
+          <h1>&#22825;&#27683; App</h1>
+          <p class="header-note" id="updatedTime">&#27491;&#22312;&#36617;&#20837;&#26368;&#26032;&#36039;&#26009;</p>
+        </div>
+        <button class="unit-toggle" id="unitToggle" type="button" aria-label="&#20999;&#25563;&#28331;&#24230;&#21934;&#20301;">
+          <span id="unitLabel">C</span>
+        </button>
+      </header>
+
+      <form class="search-form" id="searchForm">
+        <label class="sr-only" for="cityInput">&#36664;&#20837;&#22478;&#24066;</label>
+        <input
+          id="cityInput"
+          name="city"
+          type="search"
+          autocomplete="off"
+          inputmode="search"
+          placeholder="&#36664;&#20837;&#22478;&#24066;&#65292;&#20363;&#22914; Taipei&#12289;Tokyo&#12289;London"
+          required
+        />
+        <button type="submit">&#26597;&#35426;</button>
+      </form>
+
+      <section class="map-panel" id="mapPanel" data-layer="wind" aria-label="&#22825;&#27683;&#22294;&#23652;">
+        <div class="map-grid" aria-hidden="true"></div>
+        <div class="map-current">
+          <p class="location" id="locationName">&#21488;&#21271;&#24066;</p>
+          <p class="condition" id="conditionText">&#35712;&#21462;&#22825;&#27683;&#20013;...</p>
+          <p class="temperature"><span id="currentTemp">--</span><span id="unitMark">&deg;C</span></p>
+        </div>
+        <div class="wind-field" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="map-badges">
+          <span id="mapWind">-- km/h</span>
+          <span id="mapRain">--%</span>
+        </div>
+        <div class="layer-switcher" role="tablist" aria-label="&#22294;&#23652;&#20999;&#25563;">
+          <button class="layer-button is-active" type="button" data-layer="wind">&#39080;</button>
+          <button class="layer-button" type="button" data-layer="rain">&#38632;</button>
+          <button class="layer-button" type="button" data-layer="temp">&#28331;</button>
+          <button class="layer-button" type="button" data-layer="cloud">&#38642;</button>
+        </div>
+      </section>
+
+      <section class="summary-card" aria-label="&#20170;&#26085;&#25688;&#35201;">
+        <div>
+          <p class="section-kicker">MSN-style daily brief</p>
+          <h2 id="dailySummary">&#27491;&#22312;&#29983;&#25104;&#20170;&#26085;&#25688;&#35201;</h2>
+        </div>
+        <div class="sun-strip">
+          <span id="sunrise">&#26085;&#20986; --</span>
+          <span id="sunset">&#26085;&#33853; --</span>
+        </div>
+      </section>
+
+      <section class="metric-grid" aria-label="&#22825;&#27683;&#32048;&#31680;">
+        <article class="metric-card">
+          <span>&#39636;&#24863;</span>
+          <strong id="feelsLike">--</strong>
+        </article>
+        <article class="metric-card">
+          <span>&#28629;&#24230;</span>
+          <strong id="humidity">--</strong>
+        </article>
+        <article class="metric-card">
+          <span>&#39080;&#21521;</span>
+          <strong id="windDirection">--</strong>
+        </article>
+        <article class="metric-card">
+          <span>&#27683;&#22739;</span>
+          <strong id="pressure">--</strong>
+        </article>
+        <article class="metric-card">
+          <span>UV</span>
+          <strong id="uvIndex">--</strong>
+        </article>
+        <article class="metric-card">
+          <span>&#33021;&#35211;&#24230;</span>
+          <strong id="visibility">--</strong>
+        </article>
+      </section>
+
+      <section class="timeline-section">
+        <div class="section-heading">
           <div>
-            <p class="eyebrow">Weather Now</p>
-            <h1>&#22825;&#27683; App</h1>
+            <p class="section-kicker">&#36880;&#23567;&#26178;</p>
+            <h2>24h Forecast</h2>
           </div>
-          <button class="unit-toggle" id="unitToggle" type="button" aria-label="&#20999;&#25563;&#28331;&#24230;&#21934;&#20301;">
-            <span id="unitLabel">C</span>
-          </button>
-        </header>
+          <p id="statusText">&#36039;&#26009;&#20358;&#28304;&#65306;Open-Meteo</p>
+        </div>
+        <div class="hourly-list" id="hourlyList" aria-label="24 &#23567;&#26178;&#38928;&#22577;"></div>
+      </section>
 
-        <form class="search-form" id="searchForm">
-          <label class="sr-only" for="cityInput">&#36664;&#20837;&#22478;&#24066;</label>
-          <input
-            id="cityInput"
-            name="city"
-            type="search"
-            autocomplete="off"
-            inputmode="search"
-            placeholder="&#36664;&#20837;&#22478;&#24066;&#65292;&#20363;&#22914; Taipei&#12289;Tokyo&#12289;London"
-            required
-          />
-          <button type="submit">&#26597;&#35426;</button>
-        </form>
-
-        <section class="hero-weather" id="currentWeather" aria-live="polite">
-          <div class="hero-copy">
-            <p class="location" id="locationName">&#21488;&#21271;&#24066;</p>
-            <p class="condition" id="conditionText">&#35712;&#21462;&#22825;&#27683;&#20013;...</p>
-            <p class="updated" id="updatedTime">&#28310;&#20633;&#21462;&#24471;&#26368;&#26032;&#36039;&#26009;</p>
+      <section class="forecast-section">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">&#26410;&#20358;&#36264;&#21218;</p>
+            <h2>7 Days</h2>
           </div>
-          <div class="temp-wrap">
-            <div class="sky-visual" id="skyVisual" data-weather="loading" aria-hidden="true">
-              <span class="sun-core"></span>
-              <span class="cloud cloud-one"></span>
-              <span class="cloud cloud-two"></span>
-              <span class="rain rain-one"></span>
-              <span class="rain rain-two"></span>
-              <span class="rain rain-three"></span>
-            </div>
-            <div class="weather-symbol" id="weatherSymbol" aria-hidden="true">--</div>
-            <p class="temperature"><span id="currentTemp">--</span><span id="unitMark">&deg;C</span></p>
-          </div>
-        </section>
-
-        <section class="stats-grid" aria-label="&#30446;&#21069;&#22825;&#27683;&#32048;&#31680;">
-          <article class="stat">
-            <span>&#39636;&#24863;</span>
-            <strong id="feelsLike">--</strong>
-          </article>
-          <article class="stat">
-            <span>&#28629;&#24230;</span>
-            <strong id="humidity">--</strong>
-          </article>
-          <article class="stat">
-            <span>&#39080;&#36895;</span>
-            <strong id="windSpeed">--</strong>
-          </article>
-          <article class="stat">
-            <span>&#38477;&#38632;&#27231;&#29575;</span>
-            <strong id="rainChance">--</strong>
-          </article>
-        </section>
-
-        <section class="forecast-section">
-          <div class="section-heading">
-            <h2>&#26410;&#20358; 7 &#22825;</h2>
-            <p id="statusText">&#27491;&#22312;&#36617;&#20837;&#38928;&#22577;</p>
-          </div>
-          <div class="forecast-list" id="forecastList" aria-label="&#19971;&#22825;&#22825;&#27683;&#38928;&#22577;"></div>
-        </section>
+        </div>
+        <div class="forecast-list" id="forecastList" aria-label="&#19971;&#22825;&#22825;&#27683;&#38928;&#22577;"></div>
       </section>
     </main>
 
