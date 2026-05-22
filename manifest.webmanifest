@@ -1,0 +1,19 @@
+{
+  "name": "\u5929\u6c23 App",
+  "short_name": "\u5929\u6c23",
+  "description": "\u9069\u5408 Android \u624b\u6a5f\u4f7f\u7528\u7684\u57ce\u5e02\u5929\u6c23 App",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#e8f0ed",
+  "theme_color": "#0f8f8c",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
