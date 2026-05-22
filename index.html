@@ -8,7 +8,7 @@
     <title>&#22825;&#27683; App</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=3" />
+    <link rel="stylesheet" href="styles.css?v=4" />
   </head>
   <body>
     <main class="weather-app">
@@ -48,15 +48,26 @@
           <span></span><span></span><span></span><span></span><span></span><span></span>
           <span></span><span></span><span></span><span></span><span></span><span></span>
         </div>
-        <div class="map-badges">
-          <span id="mapWind">-- km/h</span>
-          <span id="mapRain">--%</span>
+        <div class="rain-field" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="cloud-field" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="layer-readout" aria-live="polite">
+          <p id="layerTitle">&#39080;&#22580;</p>
+          <strong id="layerValue">-- km/h</strong>
+          <span id="layerDetail">&#39080;&#21521; --</span>
+        </div>
+        <div class="layer-legend" id="layerLegend" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
         </div>
         <div class="layer-switcher" role="tablist" aria-label="&#22294;&#23652;&#20999;&#25563;">
-          <button class="layer-button is-active" type="button" data-layer="wind">&#39080;</button>
-          <button class="layer-button" type="button" data-layer="rain">&#38632;</button>
-          <button class="layer-button" type="button" data-layer="temp">&#28331;</button>
-          <button class="layer-button" type="button" data-layer="cloud">&#38642;</button>
+          <button class="layer-button is-active" type="button" data-layer="wind" aria-selected="true">&#39080;</button>
+          <button class="layer-button" type="button" data-layer="rain" aria-selected="false">&#38632;</button>
+          <button class="layer-button" type="button" data-layer="temp" aria-selected="false">&#28331;</button>
+          <button class="layer-button" type="button" data-layer="cloud" aria-selected="false">&#38642;</button>
         </div>
       </section>
 
@@ -120,6 +131,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=3"></script>
+    <script src="app.js?v=4"></script>
   </body>
 </html>
