@@ -1,6 +1,7 @@
 const state = {
   unit: "celsius",
   lastWeather: null,
+  activeLayer: "wind",
 };
 
 const elements = {
@@ -20,8 +21,9 @@ const elements = {
   uvIndex: document.querySelector("#uvIndex"),
   visibility: document.querySelector("#visibility"),
   mapPanel: document.querySelector("#mapPanel"),
-  mapWind: document.querySelector("#mapWind"),
-  mapRain: document.querySelector("#mapRain"),
+  layerTitle: document.querySelector("#layerTitle"),
+  layerValue: document.querySelector("#layerValue"),
+  layerDetail: document.querySelector("#layerDetail"),
   dailySummary: document.querySelector("#dailySummary"),
   sunrise: document.querySelector("#sunrise"),
   sunset: document.querySelector("#sunset"),
@@ -197,6 +199,56 @@ function createSummary(current, daily) {
   return `${condition}\uff0c\u9ad8\u6eab ${high}\uff0c\u4f4e\u6eab ${low}\u3002\u4eca\u65e5\u964d\u96e8\u6a5f\u7387 ${rain}%\uff0cUV ${uv}\uff0c\u51fa\u9580\u524d\u7559\u610f\u5929\u7a7a\u8b8a\u5316\u3002`;
 }
 
+function layerContent(layer, current, daily) {
+  const rainToday = Math.round(daily.precipitation_probability_max[0] ?? 0);
+  const temp = formatTemp(current.temperature_2m);
+  const cloud = Math.round(current.cloud_cover ?? 0);
+  const wind = Math.round(current.wind_speed_10m);
+
+  const content = {
+    wind: {
+      title: "\u98a8\u5834\u5716\u5c64",
+      value: `${wind} km/h`,
+      detail: `${windDirectionText(current.wind_direction_10m)} ${Math.round(current.wind_direction_10m)}\u00b0\uff0c\u89c0\u5bdf\u98a8\u5411\u6d41\u52d5`,
+    },
+    rain: {
+      title: "\u964d\u96e8\u5716\u5c64",
+      value: `${rainToday}%`,
+      detail: "\u986f\u793a\u4eca\u65e5\u6700\u9ad8\u964d\u96e8\u6a5f\u7387\u8207\u96e8\u5e36\u52d5\u756b",
+    },
+    temp: {
+      title: "\u6eab\u5ea6\u5716\u5c64",
+      value: temp,
+      detail: "\u4ee5\u51b7\u6696\u8272\u968e\u5448\u73fe\u76ee\u524d\u9ad4\u611f\u74b0\u5883",
+    },
+    cloud: {
+      title: "\u96f2\u91cf\u5716\u5c64",
+      value: `${cloud}%`,
+      detail: "\u986f\u793a\u96f2\u91cf\u8986\u84cb\u8207\u5929\u7a7a\u958b\u95ca\u7a0b\u5ea6",
+    },
+  };
+
+  return content[layer] ?? content.wind;
+}
+
+function renderLayer() {
+  if (!state.lastWeather) return;
+
+  const { weather } = state.lastWeather;
+  const content = layerContent(state.activeLayer, weather.current, weather.daily);
+
+  elements.mapPanel.dataset.layer = state.activeLayer;
+  elements.layerTitle.textContent = content.title;
+  elements.layerValue.textContent = content.value;
+  elements.layerDetail.textContent = content.detail;
+
+  elements.layerButtons.forEach((button) => {
+    const isActive = button.dataset.layer === state.activeLayer;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+}
+
 function renderHourly(weather) {
   const hourly = weather.hourly;
   elements.hourlyList.innerHTML = hourly.time
@@ -251,8 +303,6 @@ function renderWeather(city, weather) {
   elements.pressure.textContent = `${Math.round(current.surface_pressure)} hPa`;
   elements.uvIndex.textContent = Math.round(daily.uv_index_max[0] ?? 0);
   elements.visibility.textContent = `${Math.round((current.visibility ?? 0) / 1000)} km`;
-  elements.mapWind.textContent = `${Math.round(current.wind_speed_10m)} km/h`;
-  elements.mapRain.textContent = `${rainToday}%`;
   elements.dailySummary.textContent = createSummary(current, daily);
   elements.sunrise.textContent = `${text.sunrise} ${formatHour(daily.sunrise[0])}`;
   elements.sunset.textContent = `${text.sunset} ${formatHour(daily.sunset[0])}`;
@@ -260,6 +310,7 @@ function renderWeather(city, weather) {
 
   renderHourly(weather);
   renderForecast(weather);
+  renderLayer();
 }
 
 async function searchWeather(cityName) {
@@ -292,9 +343,8 @@ elements.unitToggle.addEventListener("click", () => {
 
 elements.layerButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    elements.layerButtons.forEach((item) => item.classList.remove("is-active"));
-    button.classList.add("is-active");
-    elements.mapPanel.dataset.layer = button.dataset.layer;
+    state.activeLayer = button.dataset.layer;
+    renderLayer();
   });
 });
 
