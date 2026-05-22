@@ -194,9 +194,12 @@ h2 {
 }
 
 .map-current,
-.map-badges,
+.layer-readout,
+.layer-legend,
 .layer-switcher,
-.wind-field {
+.wind-field,
+.rain-field,
+.cloud-field {
   position: relative;
   z-index: 1;
 }
@@ -218,15 +221,64 @@ h2 {
   line-height: 0.85;
 }
 
-.map-badges {
+.layer-readout {
   position: absolute;
   right: 18px;
   top: 18px;
-  display: flex;
-  gap: 8px;
+  width: min(240px, calc(100% - 36px));
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(11, 18, 25, 0.72);
+  backdrop-filter: blur(14px);
 }
 
-.map-badges span,
+.layer-readout p {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.layer-readout strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.8rem;
+}
+
+.layer-readout span {
+  display: block;
+  margin-top: 6px;
+  color: var(--cyan);
+  font-size: 0.9rem;
+}
+
+.layer-legend {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 72px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  height: 9px;
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--line);
+}
+
+.layer-legend span:nth-child(1) { background: #3e9bff; }
+.layer-legend span:nth-child(2) { background: #40d2c8; }
+.layer-legend span:nth-child(3) { background: #f4c84a; }
+.layer-legend span:nth-child(4) { background: #ef5b55; }
+
+.map-panel[data-layer="rain"] .layer-legend span:nth-child(1) { background: #1b3f75; }
+.map-panel[data-layer="rain"] .layer-legend span:nth-child(2) { background: #2f79cf; }
+.map-panel[data-layer="rain"] .layer-legend span:nth-child(3) { background: #40d2c8; }
+.map-panel[data-layer="rain"] .layer-legend span:nth-child(4) { background: #e5f8ff; }
+
+.map-panel[data-layer="cloud"] .layer-legend span:nth-child(1) { background: #273440; }
+.map-panel[data-layer="cloud"] .layer-legend span:nth-child(2) { background: #536475; }
+.map-panel[data-layer="cloud"] .layer-legend span:nth-child(3) { background: #9fb0bf; }
+.map-panel[data-layer="cloud"] .layer-legend span:nth-child(4) { background: #eef5f9; }
+
 .sun-strip span {
   padding: 8px 10px;
   border: 1px solid var(--line);
@@ -258,9 +310,27 @@ h2 {
   font-weight: 800;
 }
 
-.wind-field {
+.wind-field,
+.rain-field,
+.cloud-field {
   position: absolute;
   inset: 80px 22px 72px;
+}
+
+.rain-field,
+.cloud-field {
+  display: none;
+}
+
+.map-panel[data-layer="rain"] .wind-field,
+.map-panel[data-layer="temp"] .wind-field,
+.map-panel[data-layer="cloud"] .wind-field {
+  display: none;
+}
+
+.map-panel[data-layer="rain"] .rain-field,
+.map-panel[data-layer="cloud"] .cloud-field {
+  display: block;
 }
 
 .wind-field span {
@@ -297,6 +367,57 @@ h2 {
 .wind-field span:nth-child(10) { left: 84%; top: 70%; }
 .wind-field span:nth-child(11) { left: 24%; top: 54%; }
 .wind-field span:nth-child(12) { left: 54%; top: 24%; }
+
+.rain-field span {
+  position: absolute;
+  width: 5px;
+  height: 42px;
+  border-radius: 999px;
+  background: rgba(173, 230, 255, 0.8);
+  box-shadow: 0 0 18px rgba(64, 210, 200, 0.52);
+  transform: rotate(16deg);
+}
+
+.rain-field span:nth-child(1) { left: 8%; top: 4%; }
+.rain-field span:nth-child(2) { left: 26%; top: 12%; }
+.rain-field span:nth-child(3) { left: 44%; top: 2%; }
+.rain-field span:nth-child(4) { left: 66%; top: 14%; }
+.rain-field span:nth-child(5) { left: 84%; top: 8%; }
+.rain-field span:nth-child(6) { left: 16%; top: 36%; }
+.rain-field span:nth-child(7) { left: 36%; top: 42%; }
+.rain-field span:nth-child(8) { left: 58%; top: 34%; }
+.rain-field span:nth-child(9) { left: 76%; top: 48%; }
+.rain-field span:nth-child(10) { left: 10%; top: 72%; }
+.rain-field span:nth-child(11) { left: 50%; top: 70%; }
+.rain-field span:nth-child(12) { left: 88%; top: 68%; }
+
+.cloud-field span {
+  position: absolute;
+  height: 72px;
+  border-radius: 999px;
+  background: rgba(231, 241, 247, 0.62);
+  filter: blur(3px);
+}
+
+.cloud-field span:nth-child(1) {
+  left: 8%;
+  top: 16%;
+  width: 260px;
+}
+
+.cloud-field span:nth-child(2) {
+  right: 10%;
+  top: 40%;
+  width: 320px;
+  opacity: 0.72;
+}
+
+.cloud-field span:nth-child(3) {
+  left: 22%;
+  bottom: 12%;
+  width: 220px;
+  opacity: 0.48;
+}
 
 .summary-card,
 .metric-card,
@@ -456,10 +577,14 @@ h2 {
     padding: 18px;
   }
 
-  .map-badges {
+  .layer-readout {
     position: relative;
     inset: auto;
     margin-top: 18px;
+  }
+
+  .layer-legend {
+    bottom: 74px;
   }
 
   .metric-grid,
